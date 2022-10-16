@@ -59,8 +59,10 @@ Future registerEmailAccount(emailAddress, password) async {
       final user = <String, dynamic>{
         "email": emailAddress
       };
-      db.collection("users").add(user).then((DocumentReference doc) =>
-      print('DocumentSnapshot added with ID: ${doc.id}'));
+      final userData = credential.user;
+      print(userData?.uid);
+      db.collection("users").doc(userData?.uid).set(user);
+      //print('DocumentSnapshot added with ID: ${doc.id}');
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');

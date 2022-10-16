@@ -1,4 +1,4 @@
-name: test_project
+name: login_test
 description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
@@ -38,9 +38,6 @@ dependencies:
   cupertino_icons: ^1.0.2
   firebase_core: ^1.23.0
   firebase_auth: ^3.10.0
-  provider: ^6.0.3
-  cloud_firestore: ^3.5.1
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -28,17 +28,28 @@ class _Pantry2State extends State<Pantry2> {
 getItemInfo(){
   final FirebaseFirestore db = FirebaseFirestore.instance;
   final docRef = db.collection("items").doc("E5x7qOXHZWQHubo30TKn");
+  final itemListText = [];
   docRef.get().then(
     (DocumentSnapshot doc) {
       final data = doc.data() as Map<String, dynamic>;
-      return data;
+      final List<Map> itemList = [];
+      data.forEach((key, value) { 
+        itemList.add({"id": key, "name": "Product $value"});
+        itemListText.add('$key: $value');
+        print('$key: $value');
+      });
     },
     onError: (e) => print("Error getting document: $e"),
   );
+  
 }
 
 
 Future<void> _dialogBuilder(BuildContext context) {
+  //final List<Map> myProducts =
+  //    List.generate(100000, (index) => {"id": index, "name": "Product $index"})
+  //        .toList();
+    final List<Map> myProducts =  getItemInfo();  
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -47,45 +58,22 @@ Future<void> _dialogBuilder(BuildContext context) {
           title: const Text('Add New Items'),
           content: SizedBox(
             width: MediaQuery.of(context).size.width * .7,
-            child: GridView.count(
-              primary: false,
-              padding: const EdgeInsets.all(20),
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              crossAxisCount: 3,
-              children: <Widget>[
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  color: Colors.teal[100],
-                  child: const Text("Item 1"),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  color: Colors.teal[200],
-                  child: const Text('Item 2'),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  color: Colors.teal[300],
-                  child: const Text('Item 3'),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  color: Colors.teal[400],
-                  child: const Text('Item 4'),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  color: Colors.teal[500],
-                  child: const Text('Item 5'),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  color: Colors.teal[600],
-                  child: const Text('Item 6'),
-                ),
-              ],
-            )
+            child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 200,
+                childAspectRatio: 3 / 2,
+                crossAxisSpacing: 20,
+                mainAxisSpacing: 20),
+            itemCount: myProducts.length,
+            itemBuilder: (BuildContext ctx, index) {
+              return Container(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(15)),
+                child: Text(myProducts[index]["name"]),
+              );
+            }),
           ),
         );
       },

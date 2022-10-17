@@ -11,61 +11,38 @@ class _Recipies1State extends State<Recipies1> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: Text("PANTRY"),
+      floatingActionButton: null,
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance.collection("items").snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
+          if(!snapshot.hasData){
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          
+          return GridView(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,  
+              crossAxisSpacing: 4.0,  
+              mainAxisSpacing: 4.0,  
+            ),
+            children: snapshot.data!.docs.map((document) {
+              return Center(
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  width: MediaQuery.of(context).size.width / 1,
+                  height: MediaQuery.of(context).size.height / 6,
+                  child: Text("Item Name: " + document['Name']),
+                  color: Colors.green[200],
+                ),
+              );
+            }).toList(),
+          );
+        }
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _dialogBuilder(context),
-        backgroundColor: Colors.blue,
-        child: const Icon(Icons.add),
-      ),
+
     );
   }
 }
 
-getItemInfo(){
-  final FirebaseFirestore db = FirebaseFirestore.instance;
-  final docRef = db.collection("items").doc("E5x7qOXHZWQHubo30TKn");
-  final itemList = [];
-  final itemListText = [];
-  docRef.get().then(
-    (DocumentSnapshot doc) {
-      final data = doc.data() as Map<String, dynamic>;
-      data.forEach((key, value) { 
-        itemList.add(Container(
-          padding: const EdgeInsets.all(8),
-          color: Colors.teal[100],
-          child: Text('$key: $value'),
-        ));
-        itemListText.add('$key: $value');
-        print('$key: $value');
-      });
-    },
-    onError: (e) => print("Error getting document: $e"),
-  );
-  return itemList;
-}
-
-
-Future<void> _dialogBuilder(BuildContext context) {
-    var itemlist = getItemInfo();
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Add New Items'),
-          content: SizedBox(
-            width: MediaQuery.of(context).size.width * .7,
-            child: GridView.count(
-              primary: false,
-              padding: const EdgeInsets.all(20),
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              crossAxisCount: 3,
-              children: itemlist,
-            )
-          ),
-        );
-      },
-    );
-}

@@ -57,7 +57,10 @@ Future registerEmailAccount(emailAddress, password) async {
       );
       // Create a new user with a email
       final user = <String, dynamic>{
-        "email": emailAddress
+        "DateCreated": Timestamp.now(),
+        "email": emailAddress,
+        "pantryItems": [],
+        "ShoppingItems": [],
       };
       final userData = credential.user;
       print(userData?.uid);

@@ -31,9 +31,11 @@ class _Recipies1State extends State<Recipies1> {
               return Center(
                 child: Container(
                   padding: const EdgeInsets.all(8),
-                  width: MediaQuery.of(context).size.width / 1,
-                  height: MediaQuery.of(context).size.height / 6,
-                  child: Text("Item Name: " + document['Name']),
+                  width: double.infinity,
+                  height: double.infinity,
+                  child: Text(
+                  document['Name'],
+                  textAlign: TextAlign.center),
                   color: Colors.green[200],
                 ),
               );

@@ -1,11 +1,9 @@
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:test_project/screens/pages/pantry.dart';
 import 'package:test_project/screens/pages/recipies.dart';
 import 'package:test_project/screens/pages/shopping.dart';
+import 'package:test_project/screens/pages/barcodeTest.dart';
 import 'package:flutter/material.dart';
 import 'package:test_project/services/auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -17,19 +15,19 @@ class _homePageState extends State<Home> {
   final screens = [
     Recipies1(),
     Pantry2(),
-    Shopping3()
+    Shopping3(),
+    Barcode4(),
   ];
   @override
   final AuthService _auth = AuthService();
-  final List<Widget> pages = [Pantry2(), Recipies1()];
   int selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue[300],
+      backgroundColor: Colors.green[300],
       appBar: AppBar(
         title: Text('Magic Recipe'),
-        backgroundColor: Colors.blue[500],
+        backgroundColor: Colors.green[500],
         elevation: 0.0,
         actions: <Widget>[
           TextButton.icon(
@@ -48,21 +46,28 @@ class _homePageState extends State<Home> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
         onTap: (index) => setState(() => currentIndex = index),
-        selectedItemColor: Colors.white,
+        selectedItemColor: Colors.greenAccent,
         selectedFontSize: 20,
-        backgroundColor: Colors.blue[500],
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.receipt),
+            backgroundColor: Colors.green,
             label: 'Recipies',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.food_bank),
+            backgroundColor: Colors.green,
             label: 'Pantry',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_basket),
+            backgroundColor: Colors.green,
             label: 'Shopping List',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.barcode_reader),
+            backgroundColor: Colors.green,
+            label: 'Barcode Reader',
           ),
         ],
       ),

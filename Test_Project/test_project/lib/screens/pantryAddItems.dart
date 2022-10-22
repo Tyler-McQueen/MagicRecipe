@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Shopping3 extends StatefulWidget {
+class pantryAddItem extends StatefulWidget {
   @override
-  _Shopping3State createState() => _Shopping3State();
+  _pantryAddItem4State createState() => _pantryAddItem4State();
 }
 
-class _Shopping3State extends State<Shopping3> {
+class _pantryAddItem4State extends State<pantryAddItem> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

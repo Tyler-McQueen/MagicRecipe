@@ -1,6 +1,3 @@
-// ignore_for_file: sort_child_properties_last
-
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:test_project/services/auth.dart';
 
@@ -20,9 +17,9 @@ class _SignInState extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue[300],
+      backgroundColor: Colors.green[300],
       appBar: AppBar(
-        backgroundColor: Colors.blue[500],
+        backgroundColor: Colors.green[500],
         elevation: 0.0,
         title: Text('Sign Into Magic Recipe'),
       ),
@@ -64,6 +61,7 @@ class _SignInState extends State<SignIn> {
               bottom: 40,
               child: FloatingActionButton.extended(
                 icon: Icon(Icons.login),
+                backgroundColor: Colors.green,
                 onPressed: () async {await _auth.signOut();
                   dynamic result = await _auth.registerEmailAccount(emailController.text, passwordController.text);
                 }, 
@@ -75,6 +73,7 @@ class _SignInState extends State<SignIn> {
               bottom: 40,
               child: FloatingActionButton.extended(
                 icon: Icon(Icons.login),
+                backgroundColor: Colors.green,
                 onPressed: () async {
                     dynamic result = await _auth.signinEmailAccount(emailController.text, passwordController.text);
                     if (result == null){
@@ -84,7 +83,7 @@ class _SignInState extends State<SignIn> {
                       print(result.uid);
                     }
                 }, 
-              label: Text('LOGIN'),
+              label: Text('Login'),
               ),
             ),
           ],

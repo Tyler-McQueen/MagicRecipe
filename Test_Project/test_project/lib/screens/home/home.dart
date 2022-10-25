@@ -1,9 +1,11 @@
-import 'package:test_project/screens/pages/pantry.dart';
+import 'package:test_project/screens/pages/pantryMain.dart';
 import 'package:test_project/screens/pages/recipies.dart';
 import 'package:test_project/screens/pages/shopping.dart';
 import 'package:test_project/screens/pages/barcodeTest.dart';
+import 'package:test_project/screens/pages/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:test_project/services/auth.dart';
+import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -12,11 +14,14 @@ class Home extends StatefulWidget {
 
 class _homePageState extends State<Home> {
   int currentIndex = 0;
+  SnakeShape snakeShape = SnakeShape.circle;
+  
   final screens = [
     Recipies1(),
     Pantry2(),
     Shopping3(),
     Barcode4(),
+    Settings(),
   ];
   @override
   final AuthService _auth = AuthService();
@@ -25,14 +30,14 @@ class _homePageState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.green[300],
-      appBar: AppBar(
-        title: Text('Magic Recipe'),
+      /*appBar: AppBar(
+        title: const Text('Magic Recipe'),
         backgroundColor: Colors.green[500],
-        elevation: 0.0,
+        elevation: 4.0,
         actions: <Widget>[
           TextButton.icon(
-            icon: Icon(Icons.person),
-            label: Text('logout'),
+            icon: const Icon(Icons.person),
+            label: const Text('logout'),
             onPressed: () async {
               await _auth.signOut();
             },
@@ -41,33 +46,38 @@ class _homePageState extends State<Home> {
             ),
           )
         ],
-      ),
+      ),*/
       body: screens[currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: SnakeNavigationBar.color(
         currentIndex: currentIndex,
         onTap: (index) => setState(() => currentIndex = index),
-        selectedItemColor: Colors.greenAccent,
-        selectedFontSize: 20,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.receipt),
-            backgroundColor: Colors.green,
-            label: 'Recipies',
+        elevation: 8,
+        snakeShape: snakeShape,
+        snakeViewColor: Colors.green,
+        unselectedItemColor: Colors.green,
+        //selectedItemColor: Colors.greenAccent,
+        //selectedFontSize: 20,
+        // ignore: prefer_const_literals_to_create_immutables
+        items: [
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.restaurant_menu),
+            label: 'Recipe',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.food_bank),
-            backgroundColor: Colors.green,
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.local_grocery_store),
             label: 'Pantry',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_basket),
-            backgroundColor: Colors.green,
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_basket,),
             label: 'Shopping List',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.barcode_reader),
-            backgroundColor: Colors.green,
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.barcode_reader,),
             label: 'Barcode Reader',
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.settings,),
+            label: 'settings',
           ),
         ],
       ),

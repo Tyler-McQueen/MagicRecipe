@@ -11,51 +11,50 @@ class _pantryAddItem4State extends State<pantryAddItem> {
   @override
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore db = FirebaseFirestore.instance;
-
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       floatingActionButton: null,
       appBar: AppBar(
         backgroundColor: Colors.green[400],
-        actions: [
-        ],
+        actions: [],
       ),
       body: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection("items").snapshots(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
-          if(!snapshot.hasData){
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          return GridView(
-            shrinkWrap: true,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,  
-              crossAxisSpacing: 4.0,  
-              mainAxisSpacing: 4.0,  
-            ),
-            children: snapshot.data!.docs.map((document) {
-              return Card(
-                elevation:5,
-                color: Colors.green[200],
-                margin: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 16.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                child: Row(children: <Widget>[
-                  Text(document['Name']),
-                  Image.network(
-                    document['img'],
-                    fit: BoxFit.fill,
-                  ),
-                ]),
+          stream: FirebaseFirestore.instance.collection("items").snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (!snapshot.hasData) {
+              return const Center(
+                child: CircularProgressIndicator(),
               );
-            }).toList(),
-          );
+            }
+            return GridView(
+              shrinkWrap: true,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 4.0,
+                mainAxisSpacing: 4.0,
+              ),
+              children: snapshot.data!.docs.map((document) {
+                return Card(
+                  elevation: 5,
+                  color: Colors.green[200],
+                  margin: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 16.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: Row(children: <Widget>[
+                    Text(document['Name']),
+                    Image.network(
+                      document['img'],
+                      fit: BoxFit.fill,
+                    ),
+                  ]),
+                );
+              }).toList(),
+            );
 
-          /*
+            /*
           return GridView(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 4,  
@@ -113,10 +112,7 @@ class _pantryAddItem4State extends State<pantryAddItem> {
                 );
             }).toList(),
           );*/
-        }
-      ),
-
+          }),
     );
   }
 }
-

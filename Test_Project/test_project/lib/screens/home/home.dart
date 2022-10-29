@@ -15,7 +15,7 @@ class Home extends StatefulWidget {
 class _homePageState extends State<Home> {
   int currentIndex = 0;
   SnakeShape snakeShape = SnakeShape.circle;
-  
+
   final screens = [
     Recipies1(),
     Pantry2(),
@@ -68,15 +68,21 @@ class _homePageState extends State<Home> {
             label: 'Pantry',
           ),
           const BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_basket,),
+            icon: Icon(
+              Icons.shopping_basket,
+            ),
             label: 'Shopping List',
           ),
           const BottomNavigationBarItem(
-            icon: Icon(Icons.barcode_reader,),
+            icon: Icon(
+              Icons.barcode_reader,
+            ),
             label: 'Barcode Reader',
           ),
           const BottomNavigationBarItem(
-            icon: Icon(Icons.settings,),
+            icon: Icon(
+              Icons.settings,
+            ),
             label: 'settings',
           ),
         ],

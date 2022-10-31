@@ -49,6 +49,7 @@ dependencies:
   bubble_bottom_bar: ^2.0.0
   flutter_snake_navigationbar: ^0.6.1
   anim_search_bar: ^2.0.2
+  animated_snack_bar: ^0.3.0
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:test_project/screens/pages/pantryHome.dart';
 
@@ -9,58 +10,103 @@ class PantryAdd extends StatefulWidget {
 }
 
 class _PantryAddState extends State<PantryAdd> {
-  int count = 0;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore db = FirebaseFirestore.instance;
   @override
   Widget build(BuildContext context) {
+    final User? user = _auth.currentUser;
     return Scaffold(
-      body: Column(children: <Widget>[
-          Container(
-            // ignore: prefer_const_constructors
-            decoration: BoxDecoration( 
-              color: Colors.white,
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.grey ,
-                  blurRadius: 6.0,
-                  offset: Offset(0,2)
-                )
-              ],
-              borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(20)),
-            ),
-            width: double.infinity,
-            height: 90,
-            child: const Text(
-              "PANTRY",
-            ),
-          ),
-          
-      ]),
+      appBar: AppBar(
+        backgroundColor: Colors.green,
+        title: Container(
+                width: double.infinity,
+                height: 40,
+                color: Colors.white,
+                child: const Center(
+                  child: TextField(
+                    decoration: InputDecoration(
+                        hintText: 'Search for something',
+                        prefixIcon: Icon(Icons.search),
+                        suffixIcon: Icon(Icons.barcode_reader)),
+                  ),
+                ),
+              ),
+      ),
       /*
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _dialogBuilder(context),
         backgroundColor: Colors.green,
-        child: const Icon(Icons.add),
+        child: Icon(Icons.add),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) {
+              return pantryAdd();
+            }),
+          );
+        },
       ),*/
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('users')
+            .doc(user!.uid)
+            .snapshots(),
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          if (snapshot.data == null) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          //final DocumentSnapshot<Object?>? document = snapshot.data;
+          //final DocumentSnapshot<Object?> documentData = document!;
+          //document as Map<String, dynamic>;
+          Map<String, dynamic> document =
+              snapshot.data!.data() as Map<String, dynamic>;
+          final List<Map<String, dynamic>> itemDetailList =
+              (document['PantryItem'] as List)
+                  .map((itemDetail) => itemDetail as Map<String, dynamic>)
+                  .toList();
+
+          return ListView.builder(
+            itemCount: itemDetailList.length,
+            itemBuilder: (BuildContext context, int index) {
+              final Map<String, dynamic> itemDetail = itemDetailList[index];
+              final String name = itemDetail['name'];
+              return Card(
+                elevation: 5,
+                color: Colors.white,
+                //margin: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 16.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: ListTile(
+                  leading: Image(image: NetworkImage(itemDetail['img'])),
+                  title: Text('Total price: $name'),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                          onPressed: () {
+                            final User? user = _auth.currentUser;
+                            final databaseRef = db.collection("users").doc(user!.uid);
+                            databaseRef.update({
+                              "PantryItem": FieldValue.arrayRemove([itemDetail]),
+                            });
+                            print(user.uid);
+                          },
+                          icon: Icon(Icons.remove_circle_outline_rounded)),
+                      IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
+                      IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.add_circle_outline_rounded)),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }
-
-/*
-Future<void> _dialogBuilder(BuildContext context) {
-  final optionscreen = pantryAddItem();
-  return showDialog<void>(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        content: SizedBox(
-          height: double.infinity,
-          width: 700,
-          child: optionscreen,
-        ),
-      );
-    }
-  );
-}
-*/
-

@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:test_project/screens/pages/pantryHome.dart';
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:test_project/screens/pages/pantryAdd.dart';
+import 'package:test_project/screens/pages/pantryHome.dart';
 
 class Pantry2 extends StatefulWidget {
   @override
@@ -15,11 +15,12 @@ class _Pantry2State extends State<Pantry2> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: pantryHome(),
+      home: PantryAdd(),
     );
   }
 }
 
+/*
 class pantryHome extends StatelessWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore db = FirebaseFirestore.instance;
@@ -29,6 +30,19 @@ class pantryHome extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green,
+        title: Container(
+                width: double.infinity,
+                height: 40,
+                color: Colors.white,
+                child: const Center(
+                  child: TextField(
+                    decoration: InputDecoration(
+                        hintText: 'Search for something',
+                        prefixIcon: Icon(Icons.search),
+                        suffixIcon: Icon(Icons.barcode_reader)),
+                  ),
+                ),
+              ),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.green,
@@ -83,8 +97,15 @@ class pantryHome extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.add_circle_outline_rounded)),
+                          onPressed: () {
+                            final User? user = _auth.currentUser;
+                            final databaseRef = db.collection("users").doc(user!.uid);
+                            databaseRef.update({
+                              "PantryItem": FieldValue.arrayRemove([itemDetail]),
+                            });
+                            print(user.uid);
+                          },
+                          icon: Icon(Icons.remove_circle_outline_rounded)),
                       IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
                       IconButton(
                           onPressed: () {},
@@ -110,7 +131,19 @@ class pantryAdd extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.green[400],
-        actions: [],
+        title: Container(
+                width: double.infinity,
+                height: 40,
+                color: Colors.white,
+                child: const Center(
+                  child: TextField(
+                    decoration: InputDecoration(
+                        hintText: 'Search for something',
+                        prefixIcon: Icon(Icons.search),
+                        suffixIcon: Icon(Icons.barcode_reader)),
+                  ),
+                ),
+              ),
       ),
       body: StreamBuilder(
           stream: FirebaseFirestore.instance.collection("items").snapshots(),
@@ -121,7 +154,7 @@ class pantryAdd extends StatelessWidget {
                 child: CircularProgressIndicator(),
               );
             }
-            return ListView(
+            return ListView( 
               shrinkWrap: true,
               children: snapshot.data!.docs.map((document) {
                 return Card(
@@ -148,6 +181,18 @@ class pantryAdd extends StatelessWidget {
                             "PantryItem": FieldValue.arrayUnion([map]),
                           });
                           print(user.uid);
+                          AnimatedSnackBar(
+                            builder: (BuildContext context) {
+                              return Container(
+                                padding: const EdgeInsets.all(8),
+                                color: Colors.green,
+                                height: 40,
+                                child: Text('${document['Name']} : Added To Your Pantry'),
+                              );
+                            },
+                          ).show(
+                            context,
+                          );
                         },
                         icon: Icon(Icons.add_circle_outline_rounded),
                       )),
@@ -157,4 +202,4 @@ class pantryAdd extends StatelessWidget {
           }),
     );
   }
-}
+}*/

@@ -8,111 +8,103 @@ class pantryAddItem extends StatefulWidget {
 }
 
 class _pantryAddItem4State extends State<pantryAddItem> {
-  @override
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore db = FirebaseFirestore.instance;
+  @override
   Widget build(BuildContext context) {
+    final User? user = _auth.currentUser;
     return Scaffold(
-      backgroundColor: Colors.white,
-      floatingActionButton: null,
       appBar: AppBar(
-        backgroundColor: Colors.green[400],
-        actions: [],
-      ),
-      body: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection("items").snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (!snapshot.hasData) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            return GridView(
-              shrinkWrap: true,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 4.0,
-                mainAxisSpacing: 4.0,
-              ),
-              children: snapshot.data!.docs.map((document) {
-                return Card(
-                  elevation: 5,
-                  color: Colors.green[200],
-                  margin: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 16.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+        backgroundColor: Colors.green,
+        title: Container(
+                width: double.infinity,
+                height: 40,
+                color: Colors.white,
+                child: const Center(
+                  child: TextField(
+                    decoration: InputDecoration(
+                        hintText: 'Search for something',
+                        prefixIcon: Icon(Icons.search),
+                        suffixIcon: Icon(Icons.barcode_reader)),
                   ),
-                  child: Row(children: <Widget>[
-                    Text(document['Name']),
-                    Image.network(
-                      document['img'],
-                      fit: BoxFit.fill,
-                    ),
-                  ]),
-                );
-              }).toList(),
+                ),
+              ),
+      ),
+      /*
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.green,
+        child: Icon(Icons.add),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) {
+              return pantryAdd();
+            }),
+          );
+        },
+      ),*/
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('users')
+            .doc(user!.uid)
+            .snapshots(),
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          if (snapshot.data == null) {
+            return Center(
+              child: CircularProgressIndicator(),
             );
+          }
+          //final DocumentSnapshot<Object?>? document = snapshot.data;
+          //final DocumentSnapshot<Object?> documentData = document!;
+          //document as Map<String, dynamic>;
+          Map<String, dynamic> document =
+              snapshot.data!.data() as Map<String, dynamic>;
+          final List<Map<String, dynamic>> itemDetailList =
+              (document['PantryItem'] as List)
+                  .map((itemDetail) => itemDetail as Map<String, dynamic>)
+                  .toList();
 
-            /*
-          return GridView(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,  
-              crossAxisSpacing: 4.0,  
-              mainAxisSpacing: 4.0,  
-            ),
-            children: snapshot.data!.docs.map((document) {
-              return Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(50),
-                        topRight: Radius.circular(50),
-                        bottomLeft: Radius.circular(50),
-                        bottomRight: Radius.circular(50)
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.5),
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset: const Offset(0, 3), // changes position of shadow
-                      ),
+          return ListView.builder(
+            itemCount: itemDetailList.length,
+            itemBuilder: (BuildContext context, int index) {
+              final Map<String, dynamic> itemDetail = itemDetailList[index];
+              final String name = itemDetail['name'];
+              return Card(
+                elevation: 5,
+                color: Colors.white,
+                //margin: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 16.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: ListTile(
+                  leading: Image(image: NetworkImage(itemDetail['img'])),
+                  title: Text('Total price: $name'),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                          onPressed: () {
+                            final User? user = _auth.currentUser;
+                            final databaseRef = db.collection("users").doc(user!.uid);
+                            databaseRef.update({
+                              "PantryItem": FieldValue.arrayRemove([itemDetail]),
+                            });
+                            print(user.uid);
+                          },
+                          icon: Icon(Icons.remove_circle_outline_rounded)),
+                      IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
+                      IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.add_circle_outline_rounded)),
                     ],
                   ),
-                  padding: const EdgeInsets.all(8),
-                  width: double.infinity,
-                  height: double.infinity,
-                  child: InkWell(
-                    child: Column(children: <Widget>[
-                        Flexible(
-                          flex: 8,
-                          fit: FlexFit.tight,
-                          child: Image.network(
-                            document['img'],
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                        Flexible(
-                          flex: 2,
-                          child: Text(document['Name'],textAlign: TextAlign.center,),
-                        ),
-                    ]),
-                    onTap: (){
-                      final User? user = _auth.currentUser;
-                      final databaseRef = db.collection("users").doc(user!.uid);
-                      databaseRef.update({
-                        "pantryItems": FieldValue.arrayUnion([document['Name']]),
-                      });
-                      print(user.uid);
-                    },
-                    ),
-                  ),
-                );
-            }).toList(),
-          );*/
-          }),
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

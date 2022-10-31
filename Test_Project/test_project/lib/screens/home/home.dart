@@ -30,23 +30,6 @@ class _homePageState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.green[300],
-      /*appBar: AppBar(
-        title: const Text('Magic Recipe'),
-        backgroundColor: Colors.green[500],
-        elevation: 4.0,
-        actions: <Widget>[
-          TextButton.icon(
-            icon: const Icon(Icons.person),
-            label: const Text('logout'),
-            onPressed: () async {
-              await _auth.signOut();
-            },
-            style: TextButton.styleFrom(
-              primary: Colors.white
-            ),
-          )
-        ],
-      ),*/
       body: screens[currentIndex],
       bottomNavigationBar: SnakeNavigationBar.color(
         currentIndex: currentIndex,

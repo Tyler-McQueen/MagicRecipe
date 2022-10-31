@@ -10,6 +10,7 @@ class pantryAddItem extends StatefulWidget {
 class _pantryAddItem4State extends State<pantryAddItem> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore db = FirebaseFirestore.instance;
+  TextEditingController _searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final User? user = _auth.currentUser;
@@ -17,32 +18,19 @@ class _pantryAddItem4State extends State<pantryAddItem> {
       appBar: AppBar(
         backgroundColor: Colors.green,
         title: Container(
-                width: double.infinity,
-                height: 40,
-                color: Colors.white,
-                child: const Center(
-                  child: TextField(
-                    decoration: InputDecoration(
-                        hintText: 'Search for something',
-                        prefixIcon: Icon(Icons.search),
-                        suffixIcon: Icon(Icons.barcode_reader)),
-                  ),
-                ),
-              ),
+          width: double.infinity,
+          height: 40,
+          color: Colors.white,
+          child: const Center(
+            child: TextField(
+              decoration: InputDecoration(
+                  hintText: 'Search for something',
+                  prefixIcon: Icon(Icons.search),
+                  suffixIcon: Icon(Icons.barcode_reader)),
+            ),
+          ),
+        ),
       ),
-      /*
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.green,
-        child: Icon(Icons.add),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) {
-              return pantryAdd();
-            }),
-          );
-        },
-      ),*/
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection('users')
@@ -55,9 +43,6 @@ class _pantryAddItem4State extends State<pantryAddItem> {
               child: CircularProgressIndicator(),
             );
           }
-          //final DocumentSnapshot<Object?>? document = snapshot.data;
-          //final DocumentSnapshot<Object?> documentData = document!;
-          //document as Map<String, dynamic>;
           Map<String, dynamic> document =
               snapshot.data!.data() as Map<String, dynamic>;
           final List<Map<String, dynamic>> itemDetailList =
@@ -79,16 +64,18 @@ class _pantryAddItem4State extends State<pantryAddItem> {
                 ),
                 child: ListTile(
                   leading: Image(image: NetworkImage(itemDetail['img'])),
-                  title: Text('Total price: $name'),
+                  title: Text('$name'),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
                           onPressed: () {
                             final User? user = _auth.currentUser;
-                            final databaseRef = db.collection("users").doc(user!.uid);
+                            final databaseRef =
+                                db.collection("users").doc(user!.uid);
                             databaseRef.update({
-                              "PantryItem": FieldValue.arrayRemove([itemDetail]),
+                              "PantryItem":
+                                  FieldValue.arrayRemove([itemDetail]),
                             });
                             print(user.uid);
                           },

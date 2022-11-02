@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 
 class Recipies1 extends StatefulWidget {
   @override
@@ -7,65 +11,148 @@ class Recipies1 extends StatefulWidget {
 }
 
 class _Recipies1State extends State<Recipies1> {
-  int count = 0;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore db = FirebaseFirestore.instance;
+  String search = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: Text("PANTRY"),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _dialogBuilder(context),
-        backgroundColor: Colors.blue,
-        child: const Icon(Icons.add),
-      ),
-    );
-  }
-}
-
-getItemInfo(){
-  final FirebaseFirestore db = FirebaseFirestore.instance;
-  final docRef = db.collection("items").doc("E5x7qOXHZWQHubo30TKn");
-  final itemList = [];
-  final itemListText = [];
-  docRef.get().then(
-    (DocumentSnapshot doc) {
-      final data = doc.data() as Map<String, dynamic>;
-      data.forEach((key, value) { 
-        itemList.add(Container(
-          padding: const EdgeInsets.all(8),
-          color: Colors.teal[100],
-          child: Text('$key: $value'),
-        ));
-        itemListText.add('$key: $value');
-        print('$key: $value');
-      });
-    },
-    onError: (e) => print("Error getting document: $e"),
-  );
-  return itemList;
-}
-
-
-Future<void> _dialogBuilder(BuildContext context) {
-    var itemlist = getItemInfo();
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Add New Items'),
-          content: SizedBox(
-            width: MediaQuery.of(context).size.width * .7,
-            child: GridView.count(
-              primary: false,
-              padding: const EdgeInsets.all(20),
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              crossAxisCount: 3,
-              children: itemlist,
-            )
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+            backgroundColor: Colors.green[400],
+            title: Card(
+              child: TextField(
+                decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.search), hintText: 'Search...'),
+                onChanged: (val) {
+                  setState(() {
+                    search = val;
+                  });
+                },
+              ),
+            )),
+        body: Column(children: <Widget>[
+          Container(
+            child: Text('Pantry'),
           ),
-        );
-      },
-    );
+          Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection("items")
+                      .snapshots(),
+                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (!snapshot.hasData) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    final documentSnapshot = snapshot.data?.docs;
+                    return ListView.builder(
+                        itemCount: documentSnapshot?.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          if (search.isEmpty) {
+                            return Card(
+                              elevation: 5,
+                              color: Colors.white,
+                              //margin: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 16.0),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              // ignore: sort_child_properties_last
+                              child: ListTile(
+                                  leading: Image(
+                                      image: NetworkImage(
+                                          documentSnapshot![index]['img'])),
+                                  title: Text(documentSnapshot![index]['Name']),
+                                  trailing: IconButton(
+                                    onPressed: () {
+                                      Map<String, dynamic> map = {
+                                        'name': documentSnapshot![index]
+                                            ['Name'],
+                                        'img': documentSnapshot![index]['img']
+                                      };
+                                      final User? user = _auth.currentUser;
+                                      final databaseRef =
+                                          db.collection("users").doc(user!.uid);
+                                      databaseRef.update({
+                                        "PantryItem":
+                                            FieldValue.arrayUnion([map]),
+                                      });
+                                      print(user.uid);
+                                      AnimatedSnackBar(
+                                        builder: (BuildContext context) {
+                                          return Container(
+                                            padding: const EdgeInsets.all(8),
+                                            color: Colors.green,
+                                            height: 40,
+                                            child: Text(
+                                                '${documentSnapshot![index]['Name']} : Added To Your Pantry'),
+                                          );
+                                        },
+                                      ).show(
+                                        context,
+                                      );
+                                    },
+                                    icon:
+                                        Icon(Icons.add_circle_outline_rounded),
+                                  )),
+                            );
+                          }
+                          if (documentSnapshot![index]['Name']
+                              .toString()
+                              .toLowerCase()
+                              .startsWith(search.toLowerCase())) {
+                            return Card(
+                              elevation: 5,
+                              color: Colors.white,
+                              //margin: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 16.0),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              // ignore: sort_child_properties_last
+                              child: ListTile(
+                                  leading: Image(
+                                      image: NetworkImage(
+                                          documentSnapshot![index]['img'])),
+                                  title: Text(documentSnapshot![index]['Name']),
+                                  trailing: IconButton(
+                                    onPressed: () {
+                                      Map<String, dynamic> map = {
+                                        'name': documentSnapshot![index]
+                                            ['Name'],
+                                        'img': documentSnapshot![index]['img']
+                                      };
+                                      final User? user = _auth.currentUser;
+                                      final databaseRef =
+                                          db.collection("users").doc(user!.uid);
+                                      databaseRef.update({
+                                        "PantryItem":
+                                            FieldValue.arrayUnion([map]),
+                                      });
+                                      print(user.uid);
+                                      AnimatedSnackBar(
+                                        builder: (BuildContext context) {
+                                          return Container(
+                                            padding: const EdgeInsets.all(8),
+                                            color: Colors.green,
+                                            height: 40,
+                                            child: Text(
+                                                '${documentSnapshot![index]['Name']} : Added To Your Pantry'),
+                                          );
+                                        },
+                                      ).show(
+                                        context,
+                                      );
+                                    },
+                                    icon:
+                                        Icon(Icons.add_circle_outline_rounded),
+                                  )),
+                            );
+                          }
+                          ;
+                          return Container();
+                        });
+                  }))
+        ]));
+  }
 }

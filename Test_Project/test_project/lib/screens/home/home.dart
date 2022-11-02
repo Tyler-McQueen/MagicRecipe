@@ -1,11 +1,12 @@
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:test_project/screens/pages/pantry.dart';
+import 'package:test_project/screens/pages/pantryMain.dart';
 import 'package:test_project/screens/pages/recipies.dart';
 import 'package:test_project/screens/pages/shopping.dart';
+import 'package:test_project/screens/pages/barcodeTest.dart';
+import 'package:test_project/screens/pages/barcodeTest2.dart';
+import 'package:test_project/screens/pages/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:test_project/services/auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -14,55 +15,59 @@ class Home extends StatefulWidget {
 
 class _homePageState extends State<Home> {
   int currentIndex = 0;
+  SnakeShape snakeShape = SnakeShape.circle;
+
   final screens = [
     Recipies1(),
     Pantry2(),
-    Shopping3()
+    Shopping3(),
+    BarcodeTest4(),
+    Settings(),
   ];
   @override
   final AuthService _auth = AuthService();
-  final List<Widget> pages = [Pantry2(), Recipies1()];
   int selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue[300],
-      appBar: AppBar(
-        title: Text('Magic Recipe'),
-        backgroundColor: Colors.blue[500],
-        elevation: 0.0,
-        actions: <Widget>[
-          TextButton.icon(
-            icon: Icon(Icons.person),
-            label: Text('logout'),
-            onPressed: () async {
-              await _auth.signOut();
-            },
-            style: TextButton.styleFrom(
-              primary: Colors.white
-            ),
-          )
-        ],
-      ),
+      backgroundColor: Colors.green[300],
       body: screens[currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: SnakeNavigationBar.color(
         currentIndex: currentIndex,
         onTap: (index) => setState(() => currentIndex = index),
-        selectedItemColor: Colors.white,
-        selectedFontSize: 20,
-        backgroundColor: Colors.blue[500],
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.receipt),
-            label: 'Recipies',
+        elevation: 8,
+        snakeShape: snakeShape,
+        snakeViewColor: Colors.green,
+        unselectedItemColor: Colors.green,
+        //selectedItemColor: Colors.greenAccent,
+        //selectedFontSize: 20,
+        // ignore: prefer_const_literals_to_create_immutables
+        items: [
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.restaurant_menu),
+            label: 'Recipe',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.food_bank),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.local_grocery_store),
             label: 'Pantry',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_basket),
+          const BottomNavigationBarItem(
+            icon: Icon(
+              Icons.shopping_basket,
+            ),
             label: 'Shopping List',
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(
+              Icons.barcode_reader,
+            ),
+            label: 'Barcode Reader',
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(
+              Icons.settings,
+            ),
+            label: 'settings',
           ),
         ],
       ),

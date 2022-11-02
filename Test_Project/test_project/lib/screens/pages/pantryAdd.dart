@@ -13,81 +13,124 @@ class PantryAdd extends StatefulWidget {
 class _PantryAddState extends State<PantryAdd> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore db = FirebaseFirestore.instance;
+  String search = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.green[400],
-        title: Container(
-          width: double.infinity,
-          height: 40,
-          color: Colors.white,
-          child: const Center(
+            backgroundColor: Colors.green[400],
+            title: Card(
             child: TextField(
               decoration: InputDecoration(
-                  hintText: 'Search for something',
-                  prefixIcon: Icon(Icons.search),
-                  suffixIcon: Icon(Icons.barcode_reader)),
+                  prefixIcon: Icon(Icons.search), hintText: 'Search...'),
+              onChanged: (val) {
+                setState(() {
+                  search = val;
+                });
+              },
             ),
-          ),
-        ),
-      ),
-      body: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection("items").snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (!snapshot.hasData) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            return ListView(
-              shrinkWrap: true,
-              children: snapshot.data!.docs.map((document) {
-                return Card(
-                  elevation: 5,
-                  color: Colors.white,
-                  //margin: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 16.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  // ignore: sort_child_properties_last
-                  child: ListTile(
-                      leading: Image(image: NetworkImage(document['img'])),
-                      title: Text(document['Name']),
-                      trailing: IconButton(
-                        onPressed: () {
-                          Map<String, dynamic> map = {
-                            'name': document['Name'],
-                            'img': document['img']
-                          };
-                          final User? user = _auth.currentUser;
-                          final databaseRef =
-                              db.collection("users").doc(user!.uid);
-                          databaseRef.update({
-                            "PantryItem": FieldValue.arrayUnion([map]),
-                          });
-                          print(user.uid);
-                          AnimatedSnackBar(
-                            builder: (BuildContext context) {
-                              return Container(
-                                padding: const EdgeInsets.all(8),
-                                color: Colors.green,
-                                height: 40,
-                                child: Text(
-                                    '${document['Name']} : Added To Your Pantry'),
+          )),
+      body: StreamBuilder<QuerySnapshot>(
+            stream:FirebaseFirestore.instance.collection("items").snapshots(),
+            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (!snapshot.hasData) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              final documentSnapshot = snapshot.data?.docs;
+              return ListView.builder(
+                itemCount: documentSnapshot?.length,
+                itemBuilder: (BuildContext context, int index) {
+                  if(search.isEmpty){
+                    return Card(
+                      elevation: 5,
+                      color: Colors.white,
+                      //margin: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 16.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      // ignore: sort_child_properties_last
+                      child: ListTile(
+                          leading: Image(image: NetworkImage(documentSnapshot![index]['img'])),
+                          title: Text(documentSnapshot![index]['Name']),
+                          trailing: IconButton(
+                            onPressed: () {
+                              Map<String, dynamic> map = {
+                                'name': documentSnapshot![index]['Name'],
+                                'img': documentSnapshot![index]['img']
+                              };
+                              final User? user = _auth.currentUser;
+                              final databaseRef =
+                                  db.collection("users").doc(user!.uid);
+                              databaseRef.update({
+                                "PantryItem": FieldValue.arrayUnion([map]),
+                              });
+                              print(user.uid);
+                              AnimatedSnackBar(
+                                builder: (BuildContext context) {
+                                  return Container(
+                                    padding: const EdgeInsets.all(8),
+                                    color: Colors.green,
+                                    height: 40,
+                                    child: Text(
+                                        '${documentSnapshot![index]['Name']} : Added To Your Pantry'),
+                                  );
+                                },
+                              ).show(
+                                context,
                               );
                             },
-                          ).show(
-                            context,
-                          );
-                        },
-                        icon: Icon(Icons.add_circle_outline_rounded),
-                      )),
-                );
-              }).toList(),
-            );
+                            icon: Icon(Icons.add_circle_outline_rounded),
+                          )),
+                    );
+                  }
+                  if(documentSnapshot![index]['Name'].toString().toLowerCase().startsWith(search.toLowerCase())){
+                    return Card(
+                      elevation: 5,
+                      color: Colors.white,
+                      //margin: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 16.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      // ignore: sort_child_properties_last
+                      child: ListTile(
+                          leading: Image(image: NetworkImage(documentSnapshot![index]['img'])),
+                          title: Text(documentSnapshot![index]['Name']),
+                          trailing: IconButton(
+                            onPressed: () {
+                              Map<String, dynamic> map = {
+                                'name': documentSnapshot![index]['Name'],
+                                'img': documentSnapshot![index]['img']
+                              };
+                              final User? user = _auth.currentUser;
+                              final databaseRef =
+                                  db.collection("users").doc(user!.uid);
+                              databaseRef.update({
+                                "PantryItem": FieldValue.arrayUnion([map]),
+                              });
+                              print(user.uid);
+                              AnimatedSnackBar(
+                                builder: (BuildContext context) {
+                                  return Container(
+                                    padding: const EdgeInsets.all(8),
+                                    color: Colors.green,
+                                    height: 40,
+                                    child: Text(
+                                        '${documentSnapshot![index]['Name']} : Added To Your Pantry'),
+                                  );
+                                },
+                              ).show(
+                                context,
+                              );
+                            },
+                            icon: Icon(Icons.add_circle_outline_rounded),
+                          )),
+                    );
+                };
+                return Container();
+              });
           }),
     );
   }

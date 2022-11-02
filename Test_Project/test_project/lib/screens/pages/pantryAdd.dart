@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:test_project/screens/pages/pantryHome.dart';
 import 'package:animated_snack_bar/animated_snack_bar.dart';
+import 'package:test_project/screens/pages/barcodeTest.dart';
+import 'package:test_project/screens/pages/barcodeTest2.dart';
 
 class PantryAdd extends StatefulWidget {
   @override
@@ -19,8 +21,33 @@ class _PantryAddState extends State<PantryAdd> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-            backgroundColor: Colors.green[400],
-            title: Card(
+          actions: [
+            IconButton(
+              onPressed: () => showDialog<String>(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                  content: Builder(
+                    builder: (context) {
+                      // Get available height and width of the build area of this widget. Make a choice depending on the size.
+                      var height = MediaQuery.of(context).size.height;
+                      var width = MediaQuery.of(context).size.width;
+
+                      return Container(
+                        height: height,
+                        width: width,
+                        child: BarcodeTest4(),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              icon: const Icon(Icons.barcode_reader),
+            )
+          ],
+          backgroundColor: Colors.green[400],
+          title: Card(
             child: TextField(
               decoration: InputDecoration(
                   prefixIcon: Icon(Icons.search), hintText: 'Search...'),
@@ -32,18 +59,18 @@ class _PantryAddState extends State<PantryAdd> {
             ),
           )),
       body: StreamBuilder<QuerySnapshot>(
-            stream:FirebaseFirestore.instance.collection("items").snapshots(),
-            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              if (!snapshot.hasData) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              final documentSnapshot = snapshot.data?.docs;
-              return ListView.builder(
+          stream: FirebaseFirestore.instance.collection("items").snapshots(),
+          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (!snapshot.hasData) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            final documentSnapshot = snapshot.data?.docs;
+            return ListView.builder(
                 itemCount: documentSnapshot?.length,
                 itemBuilder: (BuildContext context, int index) {
-                  if(search.isEmpty){
+                  if (search.isEmpty) {
                     return Card(
                       elevation: 5,
                       color: Colors.white,
@@ -53,7 +80,9 @@ class _PantryAddState extends State<PantryAdd> {
                       ),
                       // ignore: sort_child_properties_last
                       child: ListTile(
-                          leading: Image(image: NetworkImage(documentSnapshot![index]['img'])),
+                          leading: Image(
+                              image: NetworkImage(
+                                  documentSnapshot![index]['img'])),
                           title: Text(documentSnapshot![index]['Name']),
                           trailing: IconButton(
                             onPressed: () {
@@ -86,7 +115,10 @@ class _PantryAddState extends State<PantryAdd> {
                           )),
                     );
                   }
-                  if(documentSnapshot![index]['Name'].toString().toLowerCase().startsWith(search.toLowerCase())){
+                  if (documentSnapshot![index]['Name']
+                      .toString()
+                      .toLowerCase()
+                      .startsWith(search.toLowerCase())) {
                     return Card(
                       elevation: 5,
                       color: Colors.white,
@@ -96,7 +128,9 @@ class _PantryAddState extends State<PantryAdd> {
                       ),
                       // ignore: sort_child_properties_last
                       child: ListTile(
-                          leading: Image(image: NetworkImage(documentSnapshot![index]['img'])),
+                          leading: Image(
+                              image: NetworkImage(
+                                  documentSnapshot![index]['img'])),
                           title: Text(documentSnapshot![index]['Name']),
                           trailing: IconButton(
                             onPressed: () {
@@ -128,9 +162,10 @@ class _PantryAddState extends State<PantryAdd> {
                             icon: Icon(Icons.add_circle_outline_rounded),
                           )),
                     );
-                };
-                return Container();
-              });
+                  }
+                  ;
+                  return Container();
+                });
           }),
     );
   }

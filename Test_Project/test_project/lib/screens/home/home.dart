@@ -2,6 +2,7 @@ import 'package:test_project/screens/pages/pantryMain.dart';
 import 'package:test_project/screens/pages/recipies.dart';
 import 'package:test_project/screens/pages/shopping.dart';
 import 'package:test_project/screens/pages/barcodeTest.dart';
+import 'package:test_project/screens/pages/barcodeTest2.dart';
 import 'package:test_project/screens/pages/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:test_project/services/auth.dart';
@@ -20,7 +21,7 @@ class _homePageState extends State<Home> {
     Recipies1(),
     Pantry2(),
     Shopping3(),
-    Barcode4(),
+    BarcodeTest4(),
     Settings(),
   ];
   @override

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:test_project/screens/pages/pantryHome.dart';
 import 'package:animated_snack_bar/animated_snack_bar.dart';
-import 'package:test_project/screens/pages/barcodeTest.dart';
+//import 'package:test_project/screens/pages/barcodeTest.dart';
 import 'package:test_project/screens/pages/barcodeTest2.dart';
 
 class PantryAdd extends StatefulWidget {
+  const PantryAdd({super.key});
+
   @override
   _PantryAddState createState() => _PantryAddState();
 }
@@ -26,7 +26,7 @@ class _PantryAddState extends State<PantryAdd> {
               onPressed: () => showDialog<String>(
                 context: context,
                 builder: (BuildContext context) => AlertDialog(
-                  shape: RoundedRectangleBorder(
+                  shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10.0))),
                   content: Builder(
                     builder: (context) {
@@ -34,7 +34,7 @@ class _PantryAddState extends State<PantryAdd> {
                       var height = MediaQuery.of(context).size.height;
                       var width = MediaQuery.of(context).size.width;
 
-                      return Container(
+                      return SizedBox(
                         height: height,
                         width: width,
                         child: BarcodeTest4(),
@@ -83,12 +83,12 @@ class _PantryAddState extends State<PantryAdd> {
                           leading: Image(
                               image: NetworkImage(
                                   documentSnapshot![index]['img'])),
-                          title: Text(documentSnapshot![index]['Name']),
+                          title: Text(documentSnapshot[index]['Name']),
                           trailing: IconButton(
                             onPressed: () {
                               Map<String, dynamic> map = {
-                                'name': documentSnapshot![index]['Name'],
-                                'img': documentSnapshot![index]['img']
+                                'name': documentSnapshot[index]['Name'],
+                                'img': documentSnapshot[index]['img']
                               };
                               final User? user = _auth.currentUser;
                               final databaseRef =
@@ -104,7 +104,7 @@ class _PantryAddState extends State<PantryAdd> {
                                     color: Colors.green,
                                     height: 40,
                                     child: Text(
-                                        '${documentSnapshot![index]['Name']} : Added To Your Pantry'),
+                                        '${documentSnapshot[index]['Name']} : Added To Your Pantry'),
                                   );
                                 },
                               ).show(
@@ -129,14 +129,14 @@ class _PantryAddState extends State<PantryAdd> {
                       // ignore: sort_child_properties_last
                       child: ListTile(
                           leading: Image(
-                              image: NetworkImage(
-                                  documentSnapshot![index]['img'])),
-                          title: Text(documentSnapshot![index]['Name']),
+                              image:
+                                  NetworkImage(documentSnapshot[index]['img'])),
+                          title: Text(documentSnapshot[index]['Name']),
                           trailing: IconButton(
                             onPressed: () {
                               Map<String, dynamic> map = {
-                                'name': documentSnapshot![index]['Name'],
-                                'img': documentSnapshot![index]['img']
+                                'name': documentSnapshot[index]['Name'],
+                                'img': documentSnapshot[index]['img']
                               };
                               final User? user = _auth.currentUser;
                               final databaseRef =
@@ -152,7 +152,7 @@ class _PantryAddState extends State<PantryAdd> {
                                     color: Colors.green,
                                     height: 40,
                                     child: Text(
-                                        '${documentSnapshot![index]['Name']} : Added To Your Pantry'),
+                                        '${documentSnapshot[index]['Name']} : Added To Your Pantry'),
                                   );
                                 },
                               ).show(

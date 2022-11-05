@@ -63,13 +63,12 @@ class _Recipies1State extends State<Recipies1> {
                                   leading: Image(
                                       image: NetworkImage(
                                           documentSnapshot![index]['img'])),
-                                  title: Text(documentSnapshot![index]['Name']),
+                                  title: Text(documentSnapshot[index]['Name']),
                                   trailing: IconButton(
                                     onPressed: () {
                                       Map<String, dynamic> map = {
-                                        'name': documentSnapshot![index]
-                                            ['Name'],
-                                        'img': documentSnapshot![index]['img']
+                                        'name': documentSnapshot[index]['Name'],
+                                        'img': documentSnapshot[index]['img']
                                       };
                                       final User? user = _auth.currentUser;
                                       final databaseRef =
@@ -86,7 +85,7 @@ class _Recipies1State extends State<Recipies1> {
                                             color: Colors.green,
                                             height: 40,
                                             child: Text(
-                                                '${documentSnapshot![index]['Name']} : Added To Your Pantry'),
+                                                '${documentSnapshot[index]['Name']} : Added To Your Pantry'),
                                           );
                                         },
                                       ).show(
@@ -113,14 +112,13 @@ class _Recipies1State extends State<Recipies1> {
                               child: ListTile(
                                   leading: Image(
                                       image: NetworkImage(
-                                          documentSnapshot![index]['img'])),
-                                  title: Text(documentSnapshot![index]['Name']),
+                                          documentSnapshot[index]['img'])),
+                                  title: Text(documentSnapshot[index]['Name']),
                                   trailing: IconButton(
                                     onPressed: () {
                                       Map<String, dynamic> map = {
-                                        'name': documentSnapshot![index]
-                                            ['Name'],
-                                        'img': documentSnapshot![index]['img']
+                                        'name': documentSnapshot[index]['Name'],
+                                        'img': documentSnapshot[index]['img']
                                       };
                                       final User? user = _auth.currentUser;
                                       final databaseRef =
@@ -137,7 +135,7 @@ class _Recipies1State extends State<Recipies1> {
                                             color: Colors.green,
                                             height: 40,
                                             child: Text(
-                                                '${documentSnapshot![index]['Name']} : Added To Your Pantry'),
+                                                '${documentSnapshot[index]['Name']} : Added To Your Pantry'),
                                           );
                                         },
                                       ).show(

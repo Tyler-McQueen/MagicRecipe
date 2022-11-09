@@ -56,6 +56,9 @@ dependencies:
   webview_flutter: ^3.0.4
   qr_utils: ^0.1.5
   mobile_scanner: ^2.0.0
+  animations: ^2.0.7
+  flutter_staggered_animations: ^1.1.1
+  superellipse_shape: ^0.2.0
 
 dev_dependencies:
   flutter_test:

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:superellipse_shape/superellipse_shape.dart';
 
 class pantryAddItem extends StatefulWidget {
   @override
@@ -95,7 +96,7 @@ class _pantryAddItem4State extends State<pantryAddItem> {
               if (itemDetail['name']
                   .toString()
                   .toLowerCase()
-                  .startsWith(search.toLowerCase())) {
+                  .contains(search.toLowerCase())) {
                 return Card(
                   elevation: 5,
                   color: Colors.white,

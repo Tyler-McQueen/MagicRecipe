@@ -7,6 +7,7 @@ import 'package:test_project/screens/pages/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:test_project/services/auth.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
+import 'package:animations/animations.dart';
 
 class Home extends StatefulWidget {
   @override

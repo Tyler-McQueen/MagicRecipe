@@ -98,18 +98,20 @@ class _PantryAddState extends State<PantryAdd> {
                               });
                               print(user.uid);
                               AnimatedSnackBar(
+                                mobileSnackBarPosition:
+                                    MobileSnackBarPosition.bottom,
                                 builder: (BuildContext context) {
                                   return Container(
                                     padding: const EdgeInsets.all(8),
                                     color: Colors.green,
-                                    height: 40,
+                                    //height: 50,
                                     child: Text(
+                                        style: const TextStyle(
+                                            color: Colors.white),
                                         '${documentSnapshot![index]['Name']} : Added To Your Pantry'),
                                   );
                                 },
-                              ).show(
-                                context,
-                              );
+                              ).show(context);
                             },
                             icon: Icon(Icons.add_circle_outline_rounded),
                           )),
@@ -118,7 +120,7 @@ class _PantryAddState extends State<PantryAdd> {
                   if (documentSnapshot![index]['Name']
                       .toString()
                       .toLowerCase()
-                      .startsWith(search.toLowerCase())) {
+                      .contains(search.toLowerCase())) {
                     return Card(
                       elevation: 5,
                       color: Colors.white,
@@ -128,6 +130,38 @@ class _PantryAddState extends State<PantryAdd> {
                       ),
                       // ignore: sort_child_properties_last
                       child: ListTile(
+                          onTap: () => showDialog<String>(
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10.0))),
+                                  content: Builder(
+                                    builder: (context) {
+                                      // Get available height and width of the build area of this widget. Make a choice depending on the size.
+                                      var height =
+                                          MediaQuery.of(context).size.height;
+                                      var width =
+                                          MediaQuery.of(context).size.width;
+                                      return Container(
+                                          height: height,
+                                          width: width,
+                                          child: Column(children: [
+                                            Image(
+                                                image: NetworkImage(
+                                                    documentSnapshot![index]
+                                                        ['img'])),
+                                            Text(documentSnapshot![index]
+                                                ['Name']),
+                                            Text(documentSnapshot![index]
+                                                ['NetWt']),
+                                            Text(documentSnapshot![index]
+                                                ['UPC']),
+                                          ]));
+                                    },
+                                  ),
+                                ),
+                              ),
                           leading: Image(
                               image: NetworkImage(
                                   documentSnapshot![index]['img'])),
@@ -146,18 +180,20 @@ class _PantryAddState extends State<PantryAdd> {
                               });
                               print(user.uid);
                               AnimatedSnackBar(
+                                mobileSnackBarPosition:
+                                    MobileSnackBarPosition.bottom,
                                 builder: (BuildContext context) {
                                   return Container(
                                     padding: const EdgeInsets.all(8),
                                     color: Colors.green,
-                                    height: 40,
+                                    //height: 50,
                                     child: Text(
+                                        style: const TextStyle(
+                                            color: Colors.white),
                                         '${documentSnapshot![index]['Name']} : Added To Your Pantry'),
                                   );
                                 },
-                              ).show(
-                                context,
-                              );
+                              ).show(context);
                             },
                             icon: Icon(Icons.add_circle_outline_rounded),
                           )),

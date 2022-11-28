@@ -1,12 +1,14 @@
+// ignore: file_names
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:flutter/material.dart';
 
+// ignore: use_key_in_widget_constructors
 class Barcode4 extends StatefulWidget {
   @override
+  // ignore: library_private_types_in_public_api
   _Barcode4State createState() => _Barcode4State();
-  
 }
 
 class _Barcode4State extends State<Barcode4> {
@@ -44,6 +46,7 @@ class _Barcode4State extends State<Barcode4> {
               child: (result != null)
                   ? Text(
                       'Barcode Type: ${describeEnum(result!.format)}   Data: ${result!.code}')
+                  // ignore: prefer_const_constructors
                   : Text('Scan a code'),
             ),
           )

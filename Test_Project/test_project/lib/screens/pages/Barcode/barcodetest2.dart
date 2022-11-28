@@ -1,7 +1,5 @@
-import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -28,15 +26,14 @@ class BarcodeTest4State extends State<BarcodeTest4> {
 
               debugPrint('Barcode found! $code');
 
-              final items_Ref = db.collection('items');
-              final query = items_Ref.where("UPC", isEqualTo: code).get();
-              var data = await getdata('$code').then((value) {
+              final itemsRef = db.collection('items');
+              var data = await getdata(code).then((value) {
                 return (value);
               });
               showDialog<String>(
                   context: context,
                   builder: (BuildContext context) => AlertDialog(
-                        shape: RoundedRectangleBorder(
+                        shape: const RoundedRectangleBorder(
                             borderRadius:
                                 BorderRadius.all(Radius.circular(10.0))),
                         content: Builder(
@@ -44,8 +41,7 @@ class BarcodeTest4State extends State<BarcodeTest4> {
                             // Get available height and width of the build area of this widget. Make a choice depending on the size.
                             var height = MediaQuery.of(context).size.height;
                             var width = MediaQuery.of(context).size.width;
-                            print(data['Name']);
-                            return Container(
+                            return SizedBox(
                               height: height,
                               width: width,
                               child: Scaffold(
@@ -57,6 +53,7 @@ class BarcodeTest4State extends State<BarcodeTest4> {
                                     Text(data['Name']),
                                     Text(data['UPC']),
                                     Text(data['NetWt']),
+                                    // ignore: prefer_const_constructors
                                     Text(
                                         'Is this The Product You Would Like To Add?'),
                                     Row(
@@ -66,12 +63,30 @@ class BarcodeTest4State extends State<BarcodeTest4> {
                                           MainAxisAlignment.center,
                                       children: [
                                         ElevatedButton(
-                                            onPressed: () {},
-                                            child: Text('Yes')),
-                                        SizedBox(width: 50),
+                                            onPressed: () {
+                                              Map<String, dynamic> map = {
+                                                'name': data!['Name'],
+                                                'img': data!['img']
+                                              };
+                                              final User? user =
+                                                  _auth.currentUser;
+                                              final databaseRef = db
+                                                  .collection("users")
+                                                  .doc(user!.uid);
+                                              databaseRef.update({
+                                                "PantryItem":
+                                                    FieldValue.arrayUnion(
+                                                        [map]),
+                                              });
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text('Yes')),
+                                        const SizedBox(width: 50),
                                         ElevatedButton(
-                                            onPressed: () {},
-                                            child: Text('No')),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text('No')),
                                       ],
                                     )
                                   ],
@@ -99,7 +114,6 @@ getdata(code) async {
     // String name = doc.get('Name');
     // Getting data from map
     Map<String, dynamic> data = doc.data();
-    final upc = data['Name'];
     return data;
   }
 }

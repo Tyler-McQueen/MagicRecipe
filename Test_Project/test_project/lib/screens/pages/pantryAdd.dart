@@ -43,7 +43,7 @@ class _PantryAddState extends State<PantryAdd> {
                   ),
                 ),
               ),
-              icon: const Icon(Icons.barcode_reader),
+              icon: const Icon(Icons.search),
             )
           ],
           backgroundColor: Colors.green[400],

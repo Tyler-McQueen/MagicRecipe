@@ -59,7 +59,7 @@ class _homePageState extends State<Home> {
           ),
           const BottomNavigationBarItem(
             icon: Icon(
-              Icons.barcode_reader,
+              Icons.search,
             ),
             label: 'Barcode Reader',
           ),

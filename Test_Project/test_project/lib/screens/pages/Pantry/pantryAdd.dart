@@ -1,14 +1,14 @@
+// ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:test_project/screens/pages/pantryHome.dart';
 import 'package:animated_snack_bar/animated_snack_bar.dart';
-import 'package:test_project/screens/pages/barcodeTest.dart';
-import 'package:test_project/screens/pages/barcodeTest2.dart';
+import 'package:test_project/screens/pages/Barcode/barcodeTest2.dart';
 
+// ignore: use_key_in_widget_constructors
 class PantryAdd extends StatefulWidget {
   @override
+  // ignore: library_private_types_in_public_api
   _PantryAddState createState() => _PantryAddState();
 }
 
@@ -26,7 +26,7 @@ class _PantryAddState extends State<PantryAdd> {
               onPressed: () => showDialog<String>(
                 context: context,
                 builder: (BuildContext context) => AlertDialog(
-                  shape: RoundedRectangleBorder(
+                  shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10.0))),
                   content: Builder(
                     builder: (context) {
@@ -34,10 +34,10 @@ class _PantryAddState extends State<PantryAdd> {
                       var height = MediaQuery.of(context).size.height;
                       var width = MediaQuery.of(context).size.width;
 
-                      return Container(
+                      return SizedBox(
                         height: height,
                         width: width,
-                        child: BarcodeTest4(),
+                        child: const BarcodeTest4(),
                       );
                     },
                   ),
@@ -49,7 +49,7 @@ class _PantryAddState extends State<PantryAdd> {
           backgroundColor: Colors.green[400],
           title: Card(
             child: TextField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   prefixIcon: Icon(Icons.search), hintText: 'Search...'),
               onChanged: (val) {
                 setState(() {
@@ -62,7 +62,7 @@ class _PantryAddState extends State<PantryAdd> {
           stream: FirebaseFirestore.instance.collection("items").snapshots(),
           builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (!snapshot.hasData) {
-              return Center(
+              return const Center(
                 child: CircularProgressIndicator(),
               );
             }
@@ -96,29 +96,30 @@ class _PantryAddState extends State<PantryAdd> {
                               databaseRef.update({
                                 "PantryItem": FieldValue.arrayUnion([map]),
                               });
-                              print(user.uid);
                               AnimatedSnackBar(
+                                mobileSnackBarPosition:
+                                    MobileSnackBarPosition.bottom,
                                 builder: (BuildContext context) {
                                   return Container(
                                     padding: const EdgeInsets.all(8),
                                     color: Colors.green,
-                                    height: 40,
+                                    //height: 50,
                                     child: Text(
+                                        style: const TextStyle(
+                                            color: Colors.white),
                                         '${documentSnapshot![index]['Name']} : Added To Your Pantry'),
                                   );
                                 },
-                              ).show(
-                                context,
-                              );
+                              ).show(context);
                             },
-                            icon: Icon(Icons.add_circle_outline_rounded),
+                            icon: const Icon(Icons.add_circle_outline_rounded),
                           )),
                     );
                   }
                   if (documentSnapshot![index]['Name']
                       .toString()
                       .toLowerCase()
-                      .startsWith(search.toLowerCase())) {
+                      .contains(search.toLowerCase())) {
                     return Card(
                       elevation: 5,
                       color: Colors.white,
@@ -128,6 +129,38 @@ class _PantryAddState extends State<PantryAdd> {
                       ),
                       // ignore: sort_child_properties_last
                       child: ListTile(
+                          onTap: () => showDialog<String>(
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10.0))),
+                                  content: Builder(
+                                    builder: (context) {
+                                      // Get available height and width of the build area of this widget. Make a choice depending on the size.
+                                      var height =
+                                          MediaQuery.of(context).size.height;
+                                      var width =
+                                          MediaQuery.of(context).size.width;
+                                      return SizedBox(
+                                          height: height,
+                                          width: width,
+                                          child: Column(children: [
+                                            Image(
+                                                image: NetworkImage(
+                                                    documentSnapshot![index]
+                                                        ['img'])),
+                                            Text(documentSnapshot![index]
+                                                ['Name']),
+                                            Text(documentSnapshot![index]
+                                                ['NetWt']),
+                                            Text(documentSnapshot![index]
+                                                ['UPC']),
+                                          ]));
+                                    },
+                                  ),
+                                ),
+                              ),
                           leading: Image(
                               image: NetworkImage(
                                   documentSnapshot![index]['img'])),
@@ -144,22 +177,23 @@ class _PantryAddState extends State<PantryAdd> {
                               databaseRef.update({
                                 "PantryItem": FieldValue.arrayUnion([map]),
                               });
-                              print(user.uid);
                               AnimatedSnackBar(
+                                mobileSnackBarPosition:
+                                    MobileSnackBarPosition.bottom,
                                 builder: (BuildContext context) {
                                   return Container(
                                     padding: const EdgeInsets.all(8),
                                     color: Colors.green,
-                                    height: 40,
+                                    //height: 50,
                                     child: Text(
-                                        '${documentSnapshot![index]['Name']} : Added To Your Pantry'),
+                                        style: const TextStyle(
+                                            color: Colors.white),
+                                        '${documentSnapshot[index]['Name']} : Added To Your Pantry'),
                                   );
                                 },
-                              ).show(
-                                context,
-                              );
+                              ).show(context);
                             },
-                            icon: Icon(Icons.add_circle_outline_rounded),
+                            icon: const Icon(Icons.add_circle_outline_rounded),
                           )),
                     );
                   }

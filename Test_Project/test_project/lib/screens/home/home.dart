@@ -1,31 +1,29 @@
-import 'package:test_project/screens/pages/pantryMain.dart';
-import 'package:test_project/screens/pages/recipies.dart';
-import 'package:test_project/screens/pages/shopping.dart';
-import 'package:test_project/screens/pages/barcodeTest.dart';
-import 'package:test_project/screens/pages/barcodeTest2.dart';
-import 'package:test_project/screens/pages/settings.dart';
+import 'package:test_project/screens/pages/Pantry/pantryMain.dart';
+import 'package:test_project/screens/pages/Recipe/recipiesnew.dart';
+import 'package:test_project/screens/pages/Shopping/shopping.dart';
+import 'package:test_project/screens/pages/Settings/settings.dart';
 import 'package:flutter/material.dart';
-import 'package:test_project/services/auth.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 
 class Home extends StatefulWidget {
+  const Home({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _homePageState createState() => _homePageState();
 }
 
+// ignore: camel_case_types
 class _homePageState extends State<Home> {
   int currentIndex = 0;
   SnakeShape snakeShape = SnakeShape.circle;
 
   final screens = [
-    Recipies1(),
+    RecipiesNew1(),
     Pantry2(),
     Shopping3(),
-    BarcodeTest4(),
     Settings(),
   ];
-  @override
-  final AuthService _auth = AuthService();
   int selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
@@ -56,12 +54,6 @@ class _homePageState extends State<Home> {
               Icons.shopping_basket,
             ),
             label: 'Shopping List',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(
-              Icons.barcode_reader,
-            ),
-            label: 'Barcode Reader',
           ),
           const BottomNavigationBarItem(
             icon: Icon(

@@ -1,21 +1,24 @@
+// ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+// ignore: camel_case_types, use_key_in_widget_constructors
 class pantryAddItem extends StatefulWidget {
   @override
+  // ignore: library_private_types_in_public_api
   _pantryAddItem4State createState() => _pantryAddItem4State();
 }
 
+// ignore: camel_case_types
 class _pantryAddItem4State extends State<pantryAddItem> {
   int count = 0;
   String name = "";
   String search = "";
 
-  @override
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore db = FirebaseFirestore.instance;
-  TextEditingController _searchController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     final User? user = _auth.currentUser;
@@ -24,7 +27,7 @@ class _pantryAddItem4State extends State<pantryAddItem> {
           backgroundColor: Colors.green[400],
           title: Card(
             child: TextField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   prefixIcon: Icon(Icons.search), hintText: 'Search...'),
               onChanged: (val) {
                 setState(() {
@@ -67,7 +70,7 @@ class _pantryAddItem4State extends State<pantryAddItem> {
                   ),
                   child: ListTile(
                     leading: Image(image: NetworkImage(itemDetail['img'])),
-                    title: Text('$name'),
+                    title: Text(name),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -80,13 +83,14 @@ class _pantryAddItem4State extends State<pantryAddItem> {
                                 "PantryItem":
                                     FieldValue.arrayRemove([itemDetail]),
                               });
-                              print(user.uid);
                             },
-                            icon: Icon(Icons.remove_circle_outline_rounded)),
-                        IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
+                            icon: const Icon(
+                                Icons.remove_circle_outline_rounded)),
+                        IconButton(
+                            onPressed: () {}, icon: const Icon(Icons.edit)),
                         IconButton(
                             onPressed: () {},
-                            icon: Icon(Icons.add_circle_outline_rounded)),
+                            icon: const Icon(Icons.add_circle_outline_rounded)),
                       ],
                     ),
                   ),
@@ -95,7 +99,7 @@ class _pantryAddItem4State extends State<pantryAddItem> {
               if (itemDetail['name']
                   .toString()
                   .toLowerCase()
-                  .startsWith(search.toLowerCase())) {
+                  .contains(search.toLowerCase())) {
                 return Card(
                   elevation: 5,
                   color: Colors.white,
@@ -105,7 +109,7 @@ class _pantryAddItem4State extends State<pantryAddItem> {
                   ),
                   child: ListTile(
                     leading: Image(image: NetworkImage(itemDetail['img'])),
-                    title: Text('$name'),
+                    title: Text(name),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -118,13 +122,14 @@ class _pantryAddItem4State extends State<pantryAddItem> {
                                 "PantryItem":
                                     FieldValue.arrayRemove([itemDetail]),
                               });
-                              print(user.uid);
                             },
-                            icon: Icon(Icons.remove_circle_outline_rounded)),
-                        IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
+                            icon: const Icon(
+                                Icons.remove_circle_outline_rounded)),
+                        IconButton(
+                            onPressed: () {}, icon: const Icon(Icons.edit)),
                         IconButton(
                             onPressed: () {},
-                            icon: Icon(Icons.add_circle_outline_rounded)),
+                            icon: const Icon(Icons.add_circle_outline_rounded)),
                       ],
                     ),
                   ),

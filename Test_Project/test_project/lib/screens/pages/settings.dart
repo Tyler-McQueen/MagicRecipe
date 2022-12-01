@@ -1,12 +1,16 @@
+import 'dart:html';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:test_project/screens/authenticate/sign_in.dart';
+import 'package:test_project/screens/authenticate/signinpagetest.dart';
 import 'package:test_project/screens/pages/pantryHome.dart';
 
 class Settings extends StatefulWidget {
   @override
   _SettingsState createState() => _SettingsState();
-  
 }
 
 class _SettingsState extends State<Settings> {
@@ -16,8 +20,11 @@ class _SettingsState extends State<Settings> {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
+    final PasswordInputElement = TextEditingController();
+    final currentUser = FirebaseAuth.instance.currentUser!;
+
     return Scaffold(
-     body: Container(
+      body: Container(
         padding: EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,7 +67,9 @@ class _SettingsState extends State<Settings> {
             Spacer(),
             ElevatedButton(
               child: Text('LogOut'),
-              onPressed: () {},
+              onPressed: () {
+                FirebaseAuth.instance.signOut();
+              },
               style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.all(10.0),
                   fixedSize: Size(screenWidth, screenHeight / 8),
@@ -73,4 +82,4 @@ class _SettingsState extends State<Settings> {
       ),
     );
   }
-  }
+}

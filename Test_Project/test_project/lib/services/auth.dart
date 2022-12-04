@@ -8,14 +8,15 @@ class AuthService {
 
   // create user object from firebase user
 
-  MyUser? _userFromFirebaseUser(User user){
-    return user != null ? MyUser(uid: user.uid):null;
+  MyUser? _userFromFirebaseUser(User user) {
+    return user != null ? MyUser(uid: user.uid) : null;
   }
 
   // Auth change user stream
   Stream<MyUser?> get user {
-    return _auth.authStateChanges()
-      .map((User? user) => _userFromFirebaseUser(user!));
+    return _auth
+        .authStateChanges()
+        .map((User? user) => _userFromFirebaseUser(user!));
   }
 
   // Sign In Anon
@@ -24,33 +25,31 @@ class AuthService {
       UserCredential result = await _auth.signInAnonymously();
       User? user = result.user;
       return _userFromFirebaseUser(user!);
-    } catch(e) {
+    } catch (e) {
       print(e.toString());
       return null;
     }
   }
 
 // Sign in With Email
-Future signinEmailAccount(emailAddress, password) async {
-  try {
-    final credential = await _auth.signInWithEmailAndPassword(
-      email: emailAddress,
-      password: password
-    );
-    User? user = credential.user;
-    return _userFromFirebaseUser(user!);
-  } on FirebaseAuthException catch (e) {
-    if (e.code == 'user-not-found') {
-      print('No user found for that email.');
-    } else if (e.code == 'wrong-password') {
-      print('Wrong password provided for that user.');
+  Future signinEmailAccount(emailAddress, password) async {
+    try {
+      final credential = await _auth.signInWithEmailAndPassword(
+          email: emailAddress, password: password);
+      User? user = credential.user;
+      return _userFromFirebaseUser(user!);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+      }
     }
   }
-}
 
   // Register with Email
-Future registerEmailAccount(emailAddress, password) async {
-  try {
+  Future registerEmailAccount(emailAddress, password) async {
+    try {
       final credential = await _auth.createUserWithEmailAndPassword(
         email: emailAddress,
         password: password,
@@ -59,8 +58,9 @@ Future registerEmailAccount(emailAddress, password) async {
       final user = <String, dynamic>{
         "DateCreated": Timestamp.now(),
         "email": emailAddress,
-        "pantryItems": [],
+        "PantryItem": [],
         "ShoppingItems": [],
+        "Recipes": [],
       };
       final userData = credential.user;
       print(userData?.uid);
@@ -75,13 +75,13 @@ Future registerEmailAccount(emailAddress, password) async {
     } catch (e) {
       print(e);
     }
-}
+  }
 
   // Sign Out
   Future signOut() async {
-    try{
+    try {
       return await _auth.signOut();
-    } catch(e){
+    } catch (e) {
       print(e.toString());
       return null;
     }

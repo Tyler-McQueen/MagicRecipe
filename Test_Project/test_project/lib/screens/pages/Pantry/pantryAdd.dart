@@ -87,9 +87,9 @@ class _PantryAddState extends State<PantryAdd> {
                           trailing: IconButton(
                             onPressed: () {
                               Map<String, dynamic> map = {
-                                'name': documentSnapshot![index]['Name'],
-                                'itemID': documentSnapshot![index]['itemID'],
-                                'img': documentSnapshot![index]['img'],
+                                'name': documentSnapshot[index]['Name'],
+                                'itemID': documentSnapshot[index]['itemID'],
+                                'img': documentSnapshot[index]['img'],
                               };
                               final User? user = _auth.currentUser;
                               final databaseRef =
@@ -170,6 +170,7 @@ class _PantryAddState extends State<PantryAdd> {
                             onPressed: () {
                               Map<String, dynamic> map = {
                                 'name': documentSnapshot![index]['Name'],
+                                'itemID': documentSnapshot[index]['itemID'],
                                 'img': documentSnapshot![index]['img']
                               };
                               final User? user = _auth.currentUser;

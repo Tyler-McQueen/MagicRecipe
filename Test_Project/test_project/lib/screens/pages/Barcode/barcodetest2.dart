@@ -69,6 +69,7 @@ class BarcodeTest4State extends State<BarcodeTest4> {
                                             onPressed: () {
                                               Map<String, dynamic> map = {
                                                 'name': data!['Name'],
+                                                'itemID': data['itemID'],
                                                 'img': data!['img']
                                               };
                                               final User? user =

@@ -23,19 +23,7 @@ class _Shopping3State extends State<Shopping3> {
   Widget build(BuildContext context) {
     final User? user = _auth.currentUser;
     return Scaffold(
-      appBar: AppBar(
-          backgroundColor: Colors.green[400],
-          title: Card(
-            child: TextField(
-              decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.search), hintText: 'Search...'),
-              onChanged: (val) {
-                setState(() {
-                  search = val;
-                });
-              },
-            ),
-          )),
+      appBar: AppBar(backgroundColor: Colors.green[400], title: Card()),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection('users')

@@ -1,76 +1,132 @@
+// ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
+// ignore: camel_case_types, use_key_in_widget_constructors
 class Shopping3 extends StatefulWidget {
   @override
+  // ignore: library_private_types_in_public_api
   _Shopping3State createState() => _Shopping3State();
 }
 
+// ignore: camel_case_types
 class _Shopping3State extends State<Shopping3> {
+  int count = 0;
+  String name = "";
+  String search = "";
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore db = FirebaseFirestore.instance;
+
   @override
   Widget build(BuildContext context) {
+    final User? user = _auth.currentUser;
     return Scaffold(
-      backgroundColor: Colors.green[200],
-      floatingActionButton: null,
-      body: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection("items").snapshots(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
-          if(!snapshot.hasData){
-            return Center(
+      appBar: AppBar(backgroundColor: Colors.green[400], title: Card()),
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('users')
+            .doc(user!.uid)
+            .snapshots(),
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }
-          return GridView(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,  
-              crossAxisSpacing: 4.0,  
-              mainAxisSpacing: 4.0,  
-            ),
-            children: snapshot.data!.docs.map((document) {
-              return Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(50),
-                        topRight: Radius.circular(50),
-                        bottomLeft: Radius.circular(50),
-                        bottomRight: Radius.circular(50)
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.5),
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset: Offset(0, 3), // changes position of shadow
-                      ),
-                    ],
-                  ),
-                  padding: const EdgeInsets.all(8),
-                  width: double.infinity,
-                  height: double.infinity,
-                  child: Column(children: <Widget>[
-                    Flexible(
-                      flex: 8,
-                      fit: FlexFit.tight,
-                      child: Image.network(
-                        document['img'],
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                    Flexible(
-                      flex: 2,
-                      child: Text(document['Name'],textAlign: TextAlign.center,),
-                    ),
-                  ]),
-                ),
-              );
-            }).toList(),
-          );
-        }
-      ),
+          Map<String, dynamic> document =
+              snapshot.data!.data() as Map<String, dynamic>;
+          final List<Map<String, dynamic>> itemDetailList =
+              (document['ShoppingItems'] as List)
+                  .map((itemDetail) => itemDetail as Map<String, dynamic>)
+                  .toList();
+          return ListView.builder(
+            itemCount: itemDetailList.length,
+            itemBuilder: (BuildContext context, int index) {
+              final Map<String, dynamic> itemDetail = itemDetailList[index];
+              final String name = itemDetail['name'];
 
+              if (search.isEmpty) {
+                return Card(
+                  elevation: 5,
+                  color: Colors.white,
+                  //margin: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 16.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: ListTile(
+                    title: Text(name),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              final User? user = _auth.currentUser;
+                              final databaseRef =
+                                  db.collection("users").doc(user!.uid);
+                              databaseRef.update({
+                                "ShoppingItems":
+                                    FieldValue.arrayRemove([itemDetail]),
+                              });
+                            },
+                            icon: const Icon(
+                                Icons.remove_circle_outline_rounded)),
+                        IconButton(
+                            onPressed: () {}, icon: const Icon(Icons.edit)),
+                        IconButton(
+                            onPressed: () {},
+                            icon: const Icon(Icons.add_circle_outline_rounded)),
+                      ],
+                    ),
+                  ),
+                );
+              }
+              if (itemDetail['name']
+                  .toString()
+                  .toLowerCase()
+                  .contains(search.toLowerCase())) {
+                return Card(
+                  elevation: 5,
+                  color: Colors.white,
+                  //margin: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 16.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: ListTile(
+                    leading: Image(image: NetworkImage(itemDetail['img'])),
+                    title: Text(name),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              final User? user = _auth.currentUser;
+                              final databaseRef =
+                                  db.collection("users").doc(user!.uid);
+                              databaseRef.update({
+                                "PantryItem":
+                                    FieldValue.arrayRemove([itemDetail]),
+                              });
+                            },
+                            icon: const Icon(
+                                Icons.remove_circle_outline_rounded)),
+                        IconButton(
+                            onPressed: () {}, icon: const Icon(Icons.edit)),
+                        IconButton(
+                            onPressed: () {},
+                            icon: const Icon(Icons.add_circle_outline_rounded)),
+                      ],
+                    ),
+                  ),
+                );
+              }
+              return Container();
+            },
+          );
+        },
+      ),
     );
   }
 }
-

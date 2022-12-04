@@ -15,7 +15,10 @@ class BarcodeTest4State extends State<BarcodeTest4> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Mobile Scanner')),
+      appBar: AppBar(
+        title: const Text('Mobile Scanner'),
+        backgroundColor: Colors.green[400],
+      ),
       body: MobileScanner(
           allowDuplicates: false,
           onDetect: (barcode, args) async {

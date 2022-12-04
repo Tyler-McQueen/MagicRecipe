@@ -1,3 +1,4 @@
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -28,22 +29,34 @@ getEmail() async {
   final userData = docSnap.data();
   if (userData != null) {
     for (var element in userData.PantryItem!) {
-      var name = (element['name']);
+      var name = (element['itemID']);
       final recipewithitem = db
           .collection('recipes')
-          .where("Ingredients", arrayContains: name)
+          .where("Items", arrayContains: name)
           .get()
           .then((value) {
         for (var element in value.docs) {
           var list1 = [];
+          var list3 = [];
           for (var element in userData.PantryItem!) {
-            list1.add(element['name']);
+            list1.add(element['itemID']);
+            list3.add(element['itemID']);
           }
-          var list2 = element['Ingredients'];
 
-          list1.removeWhere((item) => !list2.contains(item));
+          var list1Rem = list1.toSet().toList();
+          var list3Rem = list3.toSet().toList();
 
-          var decimalMatch = (list1.length / list2.length);
+          var list2 = element['Items'];
+          var list4 = element['Items'];
+
+          var list2Rem = list2.toSet().toList();
+          var list4Rem = list4.toSet().toList();
+
+          list1Rem.removeWhere((item) => !list2Rem.contains(item));
+          list4Rem.removeWhere((item) => list3Rem.contains(item));
+
+          print('This is missing: $list4');
+          var decimalMatch = (list1Rem.length / list2Rem.length);
           var percentMatch = (decimalMatch * 100);
           var percentMatchRounded = roundDouble(percentMatch, 2);
 
@@ -52,6 +65,9 @@ getEmail() async {
             'ingredients': element['Ingredients'],
             'img': element['img'],
             'percentMatch': percentMatchRounded,
+            'itemsHad': list1Rem,
+            'missingItems': list4Rem,
+            'Directions': element['Directions'],
           };
           final User? user = auth.currentUser;
           final databaseRef = db.collection("users").doc(user!.uid);
@@ -121,25 +137,194 @@ class _Recipies1NewState extends State<RecipiesNew1> {
                   elevation: 5,
                   color: Colors.white,
                   // ignore: sort_child_properties_last
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(children: [
-                      Flexible(
-                        flex: 8,
-                        fit: FlexFit.tight,
-                        child: Image.network(
-                          itemDetail['img'],
-                          fit: BoxFit.fill,
+                  child: InkWell(
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(children: [
+                        Flexible(
+                          flex: 8,
+                          fit: FlexFit.tight,
+                          child: Image.network(
+                            itemDetail['img'],
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                        Flexible(
+                          flex: 2,
+                          child: Text(
+                            name,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ]),
+                    ),
+                    onTap: () => showDialog<String>(
+                      builder: (BuildContext context) => AlertDialog(
+                        shape: const RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0))),
+                        content: Builder(
+                          builder: (context) {
+                            // Get available height and width of the build area of this widget. Make a choice depending on the size.
+                            var height = MediaQuery.of(context).size.height;
+                            var width = MediaQuery.of(context).size.width;
+                            return SizedBox(
+                                height: height,
+                                width: width,
+                                child: Scaffold(
+                                  appBar: AppBar(
+                                    title: Text(name),
+                                    backgroundColor: Colors.green[400],
+                                  ),
+                                  body: Center(
+                                      child: SingleChildScrollView(
+                                    child: Column(children: [
+                                      SizedBox(
+                                        height: 200,
+                                        width: double.infinity,
+                                        child: Image.network(
+                                          itemDetail['img'],
+                                          fit: BoxFit.fill,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                          height: 20,
+                                          width: double.infinity,
+                                          child: Text('Ingredients',
+                                              textAlign: TextAlign.center)),
+                                      SizedBox(
+                                        height: 150,
+                                        width: double.infinity,
+                                        child: ListView.builder(
+                                          shrinkWrap: true,
+                                          itemCount:
+                                              itemDetail['ingredients'].length,
+                                          itemBuilder: (context, int index) {
+                                            return ListTile(
+                                                title: Row(
+                                              children: [
+                                                Text(itemDetail['ingredients']
+                                                    [index]['name']),
+                                                Text(': '),
+                                                Text(itemDetail['ingredients']
+                                                    [index]['Qty']),
+                                              ],
+                                            ));
+                                          },
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 20,
+                                        width: double.infinity,
+                                        child: Text('Directions',
+                                            textAlign: TextAlign.center),
+                                      ),
+                                      SizedBox(
+                                        height: 300,
+                                        width: double.infinity,
+                                        child: ListView.builder(
+                                          shrinkWrap: true,
+                                          itemCount:
+                                              itemDetail['Directions'].length,
+                                          itemBuilder: (context, int index) {
+                                            return ListTile(
+                                              title: Text(
+                                                  itemDetail['Directions']
+                                                      [index]),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                          height: 20,
+                                          width: double.infinity,
+                                          child: Text('Items You Have',
+                                              textAlign: TextAlign.center)),
+                                      SizedBox(
+                                        height: 150,
+                                        width: double.infinity,
+                                        child: ListView.builder(
+                                          shrinkWrap: true,
+                                          itemCount:
+                                              itemDetail['itemsHad'].length,
+                                          itemBuilder: (context, int index) {
+                                            return ListTile(
+                                              title: Text(itemDetail['itemsHad']
+                                                  [index]),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 20,
+                                        width: double.infinity,
+                                        child: Text('Items You Dont Have',
+                                            textAlign: TextAlign.center),
+                                      ),
+                                      SizedBox(
+                                        height: 150,
+                                        width: double.infinity,
+                                        child: ListView.builder(
+                                          shrinkWrap: true,
+                                          itemCount:
+                                              itemDetail['missingItems'].length,
+                                          itemBuilder: (context, int index) {
+                                            return ListTile(
+                                                title: Text(
+                                                    itemDetail['missingItems']
+                                                        [index]),
+                                                trailing: IconButton(
+                                                  onPressed: () {
+                                                    Map<String, dynamic> map = {
+                                                      'name': itemDetail[
+                                                              'missingItems']
+                                                          [index],
+                                                    };
+                                                    final User? user =
+                                                        _auth.currentUser;
+                                                    final databaseRef = db
+                                                        .collection("users")
+                                                        .doc(user!.uid);
+                                                    databaseRef.update({
+                                                      "ShoppingItems":
+                                                          FieldValue.arrayUnion(
+                                                              [map]),
+                                                    });
+                                                    AnimatedSnackBar(
+                                                      mobileSnackBarPosition:
+                                                          MobileSnackBarPosition
+                                                              .bottom,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return Container(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8),
+                                                          color: Colors.green,
+                                                          //height: 50,
+                                                          child: Text(
+                                                              style: const TextStyle(
+                                                                  color: Colors
+                                                                      .white),
+                                                              '${itemDetail['missingItems'][index]} : Added To Your Shopping List'),
+                                                        );
+                                                      },
+                                                    ).show(context);
+                                                  },
+                                                  icon: const Icon(Icons
+                                                      .add_circle_outline_rounded),
+                                                ));
+                                          },
+                                        ),
+                                      ),
+                                    ]),
+                                  )),
+                                ));
+                          },
                         ),
                       ),
-                      Flexible(
-                        flex: 2,
-                        child: Text(
-                          name,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ]),
+                      context: context,
+                    ),
                   ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),

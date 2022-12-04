@@ -88,7 +88,8 @@ class _PantryAddState extends State<PantryAdd> {
                             onPressed: () {
                               Map<String, dynamic> map = {
                                 'name': documentSnapshot![index]['Name'],
-                                'img': documentSnapshot![index]['img']
+                                'itemID': documentSnapshot![index]['itemID'],
+                                'img': documentSnapshot![index]['img'],
                               };
                               final User? user = _auth.currentUser;
                               final databaseRef =

@@ -1,9 +1,11 @@
 import 'dart:html';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:test_project/screens/authenticate/sign_in.dart';
 import 'package:test_project/screens/authenticate/signinpagetest.dart';
 import 'package:test_project/screens/pages/pantryHome.dart';
@@ -15,13 +17,40 @@ class Settings extends StatefulWidget {
 
 class _SettingsState extends State<Settings> {
   int count = 0;
+
+  final _formKey = GlobalKey<FormState>();
+
+  var newPassword = '';
+  var newEmail = '';
+
+  final newPasswordController = TextEditingController();
+  final newEmailController = TextEditingController();
+
+  @override
+  void dispose() {
+    newPasswordController.dispose();
+    newEmailController.dispose();
+    super.dispose();
+  }
+
+  final currentUser = FirebaseAuth.instance.currentUser!;
+
+  changeUserInfo() async {
+    try {
+      await currentUser?.updateEmail(newEmail);
+    } catch (error) {}
+
+    try {
+      await currentUser!.updatePassword(newPassword);
+    } catch (error) {}
+
+    FirebaseAuth.instance.signOut();
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
-
-    final PasswordInputElement = TextEditingController();
-    final currentUser = FirebaseAuth.instance.currentUser!;
 
     return Scaffold(
       body: Container(
@@ -30,31 +59,30 @@ class _SettingsState extends State<Settings> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            TextField(
-              decoration: InputDecoration(
-                hintText: 'enter new User Name',
-                //border: OutlineInputBorder(),
-              ),
-            ),
-            Spacer(),
-            TextField(
+            TextFormField(
               decoration: InputDecoration(
                 hintText: 'enter new password',
-                //  border: OutlineInputBorder(),
               ),
+              controller: newPasswordController,
             ),
             Spacer(),
-            TextField(
+            TextFormField(
               decoration: InputDecoration(
                 hintText: 'enter new email',
-                //  border: OutlineInputBorder(),
               ),
+              controller: newEmailController,
             ),
             Spacer(),
             Spacer(),
             ElevatedButton(
               child: Text('Change user Info'),
-              onPressed: () {},
+              onPressed: () {
+                setState(() {
+                  newPassword = newPasswordController.text;
+                  newEmail = newEmailController.text;
+                });
+                changeUserInfo();
+              },
               style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.all(10.0),
                   fixedSize: Size(screenWidth, screenHeight / 8),

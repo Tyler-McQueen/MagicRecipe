@@ -53,58 +53,62 @@ class _SettingsState extends State<Settings> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
+      appBar: AppBar(
+          title: const Text('Settings Page'),
+          backgroundColor: Colors.green[400]),
       body: Container(
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            TextFormField(
-              decoration: InputDecoration(
-                hintText: 'enter new password',
-              ),
-              controller: newPasswordController,
-            ),
-            Spacer(),
-            TextFormField(
-              decoration: InputDecoration(
-                hintText: 'enter new email',
-              ),
-              controller: newEmailController,
-            ),
-            Spacer(),
-            Spacer(),
-            ElevatedButton(
-              child: Text('Change user Info'),
-              onPressed: () {
-                setState(() {
-                  newPassword = newPasswordController.text;
-                  newEmail = newEmailController.text;
-                });
-                changeUserInfo();
-              },
-              style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.all(10.0),
-                  fixedSize: Size(screenWidth, screenHeight / 8),
-                  textStyle: TextStyle(fontSize: 40),
-                  primary: Colors.green[400],
-                  onPrimary: Color.fromARGB(255, 250, 250, 250)),
-            ),
-            Spacer(),
-            Spacer(),
-            Spacer(),
-            ElevatedButton(
-              child: Text('LogOut'),
-              onPressed: () {
-                FirebaseAuth.instance.signOut();
-              },
-              style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.all(10.0),
-                  fixedSize: Size(screenWidth, screenHeight / 8),
-                  textStyle: TextStyle(fontSize: 40),
-                  primary: Colors.green[400],
-                  onPrimary: Color.fromARGB(255, 250, 250, 250)),
-            ),
+          children: <Widget>[
+            Padding(
+                padding: const EdgeInsets.all(10),
+                child: TextFormField(
+                  // ignore: prefer_const_constructors
+                  decoration: InputDecoration(
+                    hintText: 'Enter new password',
+                  ),
+                  controller: newPasswordController,
+                )),
+            Padding(
+                padding: const EdgeInsets.all(10),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    hintText: 'Enter new email',
+                  ),
+                  controller: newEmailController,
+                )),
+            Padding(
+                padding: const EdgeInsets.all(10),
+                child: ElevatedButton(
+                  child: Text('Change Account Info'),
+                  onPressed: () {
+                    setState(() {
+                      newPassword = newPasswordController.text;
+                      newEmail = newEmailController.text;
+                    });
+                    changeUserInfo();
+                  },
+                  style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.all(10.0),
+                      fixedSize: Size(screenWidth, screenHeight / 15),
+                      textStyle: TextStyle(fontSize: 20),
+                      primary: Colors.green[400],
+                      onPrimary: Color.fromARGB(255, 250, 250, 250)),
+                )),
+            Padding(
+                padding: const EdgeInsets.all(10),
+                child: ElevatedButton(
+                  child: Text('LogOut'),
+                  onPressed: () {
+                    FirebaseAuth.instance.signOut();
+                  },
+                  style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.all(10.0),
+                      fixedSize: Size(screenWidth, screenHeight / 15),
+                      textStyle: TextStyle(fontSize: 20),
+                      primary: Colors.green[400],
+                      onPrimary: Color.fromARGB(255, 250, 250, 250)),
+                )),
           ],
         ),
       ),
